@@ -23,30 +23,30 @@ function islandora_book_batch_form($form, &$form_state, $object) {
       'file_validate_extensions' => array('zip'),
     ),
   );
-
-module_load_include('inc', 'umkcdora', 'includes/utilities');
-$content_model_mappings = umkcdora_retrieve_content_model_mappings();
-$allowed_models = array();
-# Get list of umkc models that derive from islandora:bookCModel. 
-foreach ($content_model_mappings as $mappings_arr_key => $mappings_arr_val) {
-	foreach($mappings_arr_val['mappings'] as $value) {
-		if('islandora:bookCModel' === $value) { 
-			$allowed_models[] = $mappings_arr_key; 
-			break;
+/* ------------------------------------------------------------------------------------- */
+	module_load_include('inc', 'umkcdora', 'includes/utilities');
+	$content_model_mappings = umkcdora_retrieve_content_model_mappings();
+	$allowed_models = array();
+	# Get list of umkc models that derive from islandora:bookCModel. 
+	foreach ($content_model_mappings as $mappings_arr_key => $mappings_arr_val) {
+		foreach($mappings_arr_val['mappings'] as $value) {
+			if('islandora:bookCModel' === $value) { 
+				$allowed_models[] = $mappings_arr_key; 
+				break;
+			}
 		}
 	}
-}
-$default_model = $allowed_models[0];
+	$default_model = $allowed_models[0];
 
-  $form['select_model'] = array(
-    '#title' => t('Select a Content Model'),
-    '#type' => 'select',
-    '#options' => $allowed_models,
-    '#default_value' => $default_model,
-    '#required' => TRUE,
-  );
+	$form['select_model'] = array(
+			'#title' => t('Select a Content Model'),
+			'#type' => 'select',
+			'#options' => $allowed_models,
+			'#default_value' => $default_model,
+			'#required' => TRUE,
+	);
     
-
+/* ------------------------------------------------------------------------------------- */
   $form['parent'] = array(
     '#type' => 'value',
     '#value' => $object->id,
@@ -128,10 +128,12 @@ function islandora_book_batch_form_submit($form, $form_state) {
 
   $form_state['values']['target'] = $target->uri;
 
+/* ------------------------------------------------------------------------------------- */
   $model_id = $form_state['values']['select_model']; 
   $models_options = $form_state['complete form']['select_model']['#options'];
   $content_models = array('islandora:bookCModel', $models_options[$model_id]);
   dpm($content_models);
+/* ------------------------------------------------------------------------------------- */
 
   $connection = islandora_get_tuque_connection();
   $parameters = $form_state['values'] + array(
